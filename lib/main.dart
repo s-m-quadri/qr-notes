@@ -12,10 +12,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'QR Notes',
-      theme: ThemeData(
-        primarySwatch: Colors.blueGrey,
-        // useMaterial3: true
-      ),
+      theme: ThemeData(primarySwatch: Colors.blueGrey, useMaterial3: true),
       home: const HomePage(title: 'QR Notes'),
     );
   }

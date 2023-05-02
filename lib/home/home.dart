@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import '../scan/scan.dart';
 import '../settings/settings.dart';
 import '../about/about.dart';
+import '../storage/storage.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.title});
@@ -21,9 +23,20 @@ class _HomePageState extends State<HomePage> {
 
   static const List<Widget> _optionWidget = [
     Text("This is home"),
-    Text("This is Storage"),
+    Storage(),
     Text("This is Secretes"),
   ];
+
+  Future<void> _getScannedNotes(BuildContext context) async {
+    String result = await Navigator.push(
+        context, MaterialPageRoute(builder: (context) => Settings()));
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context)
+      ..removeCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text("Result: $result")));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,14 +44,21 @@ class _HomePageState extends State<HomePage> {
     // Application Top-bar
     /////////////////////////////////////////////////////////////////////////
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => QRScan()));
+        },
+        child: Icon(Icons.camera_alt),
+        tooltip: "Capture QR Notes",
+      ),
       appBar: AppBar(
         title: Text(widget.title),
         actions: [
           PopupMenuButton(onSelected: (int index) {
             switch (index) {
               case 1:
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => Settings()));
+                _getScannedNotes(context);
                 break;
               case 2:
                 Navigator.push(
