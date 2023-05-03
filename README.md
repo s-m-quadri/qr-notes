@@ -27,7 +27,7 @@ QR-Notes is released under the [MIT License](https://github.com/s-m-quadri/qr-no
 
 ## Contributing
 
-QR-Notes is an open-source project, and contributions are highly appreciated. If you have any suggestions, bug reports, or feature requests, please feel free to open an issue or submit a pull request. Before making any significant changes, please discuss them with the project maintainers to ensure they align with the overall development roadmap.
+QR-Notes is an open-source project, and contributions are highly appreciated. If you have any suggestions, bug reports, or feature requests, please feel free to open an issue or submit a pull request. Before making any significant changes, please discuss them with the project maintainers to ensure they align with the overall development roadmap. For some help, can checkout [folder](https://drive.google.com/drive/folders/16rvISaxAF7boID86ED8NmPdFIYnPKKiT?usp=share_link) containing some formal, design and research work and documentation.
 
 ## Development Status
 
