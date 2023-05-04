@@ -3,6 +3,10 @@ import '../scan/scan.dart';
 import '../settings/settings.dart';
 import '../about/about.dart';
 import '../storage/storage.dart';
+import '../secretes/secretes.dart';
+import '../workplace/workplace.dart';
+import '../history/history.dart';
+import 'overview.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.title});
@@ -13,7 +17,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0;
+  int _selectedIndex = 2;
 
   void _onItemTapped(int index) {
     setState(() {
@@ -22,9 +26,39 @@ class _HomePageState extends State<HomePage> {
   }
 
   static const List<Widget> _optionWidget = [
-    Text("This is home"),
-    Storage(),
-    Text("This is Secretes"),
+    QRNSecretes(),
+    QRNWorkplace(),
+    QRNOverview(),
+    QRNStorage(),
+    QRNHistory(),
+  ];
+
+  static const List<BottomNavigationBarItem> _optionButtons = [
+    BottomNavigationBarItem(
+      icon: Icon(Icons.lock_outline),
+      label: "My Secretes",
+      tooltip: "Secretes Page",
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.dashboard_customize_outlined),
+      label: "My Workplace",
+      tooltip: "Workplace Page",
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.home_outlined),
+      label: "Home",
+      tooltip: "Home Page",
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.dataset_outlined),
+      label: "Storage",
+      tooltip: "Storage Page",
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.history),
+      label: "History",
+      tooltip: "History Page",
+    ),
   ];
 
   Future<void> _getScannedNotes(BuildContext context) async {
@@ -38,6 +72,18 @@ class _HomePageState extends State<HomePage> {
       ..showSnackBar(SnackBar(content: Text("Result: $result")));
   }
 
+  void _menuOnSelect(int index) {
+    switch (index) {
+      case 1:
+        _getScannedNotes(context);
+        break;
+      case 2:
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => About()));
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     /////////////////////////////////////////////////////////////////////////
@@ -49,28 +95,25 @@ class _HomePageState extends State<HomePage> {
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => QRScan()));
         },
-        child: Icon(Icons.camera_alt),
+        child: Icon(
+          Icons.camera_alt,
+          color: Theme.of(context).primaryColorDark,
+        ),
+        backgroundColor: Theme.of(context).cardColor,
+        splashColor: Theme.of(context).primaryColor,
         tooltip: "Capture QR Notes",
       ),
       appBar: AppBar(
         title: Text(widget.title),
         actions: [
-          PopupMenuButton(onSelected: (int index) {
-            switch (index) {
-              case 1:
-                _getScannedNotes(context);
-                break;
-              case 2:
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => About()));
-                break;
-            }
-          }, itemBuilder: (context) {
-            return const [
-              PopupMenuItem(value: 1, child: Text("Settings")),
-              PopupMenuItem(value: 2, child: Text("About")),
-            ];
-          })
+          PopupMenuButton(
+              onSelected: _menuOnSelect,
+              itemBuilder: (context) {
+                return const [
+                  PopupMenuItem(value: 1, child: Text("Settings")),
+                  PopupMenuItem(value: 2, child: Text("About")),
+                ];
+              })
         ],
       ),
 
@@ -83,25 +126,13 @@ class _HomePageState extends State<HomePage> {
       // Bottom Navigation Bar
       /////////////////////////////////////////////////////////////////////////
       bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: "Home",
-            tooltip: "Home Page",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_basket),
-            label: "Storage",
-            tooltip: "Storage Page",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.key),
-            label: "Secretes",
-            tooltip: "Secretes Page",
-          ),
-        ],
+        items: _optionButtons,
         currentIndex: _selectedIndex,
-        selectedItemColor: Theme.of(context).primaryColor,
+        selectedItemColor: Theme.of(context).primaryColorDark,
+        unselectedItemColor: Theme.of(context).primaryColor,
+        showUnselectedLabels: true,
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: Theme.of(context).primaryColorLight,
         onTap: _onItemTapped,
       ),
     );

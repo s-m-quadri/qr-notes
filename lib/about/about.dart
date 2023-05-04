@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:qr_notes/pagePlaceholder.dart';
+
 class About extends StatefulWidget {
   const About({Key? key}) : super(key: key);
 
@@ -15,7 +17,7 @@ class _AboutState extends State<About> {
         title: Text("QR Notes - About"),
       ),
       body: Center(
-        child: Text("This is About"),
+        child: RenderPlaceholder(icon: Icons.info_outline, text: "About Page"),
       ),
     );
   }

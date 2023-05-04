@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:qr_notes/pagePlaceholder.dart';
+
 class Settings extends StatefulWidget {
   const Settings({Key? key}) : super(key: key);
 
@@ -15,7 +17,8 @@ class _SettingsState extends State<Settings> {
         title: Text("QR Notes - Settings"),
       ),
       body: Center(
-        child: Text("This is Settings"),
+        child:
+            RenderPlaceholder(icon: Icons.settings, text: "Settings Page"),
       ),
     );
   }

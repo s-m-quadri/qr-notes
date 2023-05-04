@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'database_manager.dart';
 import 'qr_code.dart';
 
-class Storage extends StatefulWidget {
-  const Storage({Key? key}) : super(key: key);
+class QRNStorage extends StatefulWidget {
+  const QRNStorage({Key? key}) : super(key: key);
 
   @override
-  State<Storage> createState() => _StorageState();
+  State<QRNStorage> createState() => _QRNStorageState();
 }
 
-class _StorageState extends State<Storage> {
+class _QRNStorageState extends State<QRNStorage> {
   // Query all the records from the database,
   // in the qr-code table for all qr-codes
   // Abstraction, most of the work is done by
