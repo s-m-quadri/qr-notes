@@ -16,6 +16,7 @@ class _QRNStorageState extends State<QRNStorage> {
   // Abstraction, most of the work is done by
   // 1. Database Management (Dart File)
   // 2. QR Code (Dart File)
+  // List<QRCode>? buckets;
   List<QRCode>? buckets;
   Future<Widget> getList() async {
     DatabaseManager db = DatabaseManager();

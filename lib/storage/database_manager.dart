@@ -34,9 +34,18 @@ class DatabaseManager extends _DatabaseInitializer {
     await db.execute("""
           CREATE TABLE qr_codes(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            title TEXT,
-            content TEXT,
-            isEncrypted INTEGER 
+            qr_id TEXT NOT NULL,
+            part_no INTEGER NOT NULL,
+            part_total INTEGER NOT NULL,
+            qr_title TEXT,
+            qr_content TEXT
+          );
+          
+          CREATE TABLE qr_keys(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            key_id TEXT NOT NULL,
+            key_title TEXT,
+            key_content TEXT
           );
         """);
     // ... More tables
@@ -46,7 +55,7 @@ class DatabaseManager extends _DatabaseInitializer {
     final db = await _getDB();
     await db.insert(
       "qr_codes",
-      data.mapToDB(),
+      data.mapQRCode(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
@@ -56,7 +65,13 @@ class DatabaseManager extends _DatabaseInitializer {
     List<Map<String, dynamic>> maps = await db.query("qr_codes");
     List<QRCode> result = [];
     for (Map map in maps) {
-      result.add(QRCode(title: map["title"], content: map["content"]));
+      result.add(QRCode(
+        qrId: map["qr_id"],
+        partNo: map["part_no"],
+        partTotal: map["part_total"],
+        title: map["qr_title"],
+        content: map["qr_content"],
+      ));
     }
     return result;
   }

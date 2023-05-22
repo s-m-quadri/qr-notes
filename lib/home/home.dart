@@ -75,7 +75,9 @@ class _HomePageState extends State<HomePage> {
   void _menuOnSelect(int index) {
     switch (index) {
       case 1:
-        _getScannedNotes(context);
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => Settings()));
+        // _getScannedNotes(context);
         break;
       case 2:
         Navigator.push(
@@ -91,6 +93,7 @@ class _HomePageState extends State<HomePage> {
     /////////////////////////////////////////////////////////////////////////
     return Scaffold(
       floatingActionButton: FloatingActionButton(
+        // onPressed: _getScannedNotes,
         onPressed: () {
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => QRScan()));
