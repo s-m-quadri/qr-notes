@@ -1,51 +1,41 @@
 import 'package:flutter/material.dart';
 
-import 'database_manager.dart';
-import 'qr_code.dart';
-import 'qr_note_view.dart';
+import 'package:qr_notes/storage/history.dart';
+import '../storage/database_manager.dart';
 
-class QRNStorage extends StatefulWidget {
-  const QRNStorage({Key? key}) : super(key: key);
+class QRNHistory extends StatefulWidget {
+  const QRNHistory({Key? key}) : super(key: key);
 
   @override
-  State<QRNStorage> createState() => _QRNStorageState();
+  State<QRNHistory> createState() => _QRNHistoryState();
 }
 
-class _QRNStorageState extends State<QRNStorage> {
+class _QRNHistoryState extends State<QRNHistory> {
   // For Preview in storage page
-  Widget buildShortView(BuildContext context, QRCode qr_note) {
+  Widget buildShortView(BuildContext context, History trace) {
     return ListTile(
-      horizontalTitleGap: 10,
-      leading: Icon(Icons.qr_code_scanner,
-          size: 50, color: Theme.of(context).primaryColorDark),
+      horizontalTitleGap: 5,
+      leading: Icon(Icons.history),
       iconColor: Theme.of(context).primaryColor,
-      title: Text(qr_note.title),
-      subtitle: Text(qr_note.qrId),
-      trailing: Text("Tap to View"),
-      onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => QRNoteView(qr_code: qr_note)));
-      },
-      splashColor: Theme.of(context).cardColor,
+      title: Text(trace.datetime.toString()),
+      subtitle: Text(trace.activity),
     );
   }
 
   // Query all the records from the database,
   // in the qr-code table for all qr-codes
-  List<QRCode>? buckets;
+  List<History>? buckets;
 
   Future<Widget> getList() async {
     DatabaseManager db = DatabaseManager();
-    List<QRCode>? buckets_temp = await db.getAllQRCodes();
+    List<History>? buckets_temp = await db.getAllHistory();
 
     setState(() {
       buckets = buckets_temp;
     });
 
     if (buckets!.isEmpty) {
-      return Text("Scan to get QR Notes!");
+      return Text("Do some activity to trace history!");
     }
 
     return RefreshIndicator(
@@ -56,7 +46,7 @@ class _QRNStorageState extends State<QRNStorage> {
           },
         ),
         onRefresh: () async {
-          List<QRCode>? buckets_temp = await db.getAllQRCodes();
+          List<History>? buckets_temp = await db.getAllHistory();
           await Future.delayed(Duration(milliseconds: 1500));
           setState(() {
             buckets = buckets_temp;

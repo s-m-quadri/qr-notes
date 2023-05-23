@@ -5,7 +5,7 @@ import '../about/about.dart';
 import '../storage/storage.dart';
 import '../secretes/secretes.dart';
 import '../workplace/workplace.dart';
-import '../history/history.dart';
+import '../history/history_page.dart';
 import 'overview.dart';
 
 class HomePage extends StatefulWidget {
@@ -77,7 +77,6 @@ class _HomePageState extends State<HomePage> {
       case 1:
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => Settings()));
-        // _getScannedNotes(context);
         break;
       case 2:
         Navigator.push(

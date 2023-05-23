@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'history.dart';
 
 import 'qr_code.dart';
 
@@ -40,7 +41,15 @@ class DatabaseManager extends _DatabaseInitializer {
             qr_title TEXT,
             qr_content TEXT
           );
-          
+        """);
+    await db.execute("""
+          CREATE TABLE history(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            datetime TEXT NOT NULL,
+            activity TEXT NOT NULL
+          );
+        """);
+    await db.execute("""
           CREATE TABLE qr_keys(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             key_id TEXT NOT NULL,
@@ -55,7 +64,26 @@ class DatabaseManager extends _DatabaseInitializer {
     final db = await _getDB();
     await db.insert(
       "qr_codes",
-      data.mapQRCode(),
+      data.mapToDB(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+    History trace =
+        History(activity: "New scan - QR Note #${data.qrId}: ${data.title}");
+    await db.insert(
+      "history",
+      trace.mapToDB(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<void> deleteQRCode({required QRCode data}) async {
+    final db = await _getDB();
+    await db.delete("qr_codes", where: "qr_id = ?", whereArgs: [data.qrId]);
+    History trace =
+        History(activity: "Deleted - QR Note #${data.qrId}: ${data.title}");
+    await db.insert(
+      "history",
+      trace.mapToDB(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
@@ -73,6 +101,19 @@ class DatabaseManager extends _DatabaseInitializer {
         content: map["qr_content"],
       ));
     }
-    return result;
+    return result.reversed.toList();
+  }
+
+  Future<List<History>> getAllHistory() async {
+    final db = await _getDB();
+    List<Map<String, dynamic>> maps = await db.query("history");
+    List<History> result = [];
+    for (Map map in maps) {
+      result.add(History(
+        datetime: map["datetime"],
+        activity: map["activity"],
+      ));
+    }
+    return result.reversed.toList();
   }
 }
