@@ -40,7 +40,11 @@ dependencies:
   shared_preferences: ^2.1.0
   mobile_scanner: ^3.2.0
   flutter_launcher_icons: ^0.13.1
-
+  flutter_markdown:
+  qr_flutter:
+  encrypt:
+  pdf:
+  printing:
 
 dev_dependencies:
   flutter_test:

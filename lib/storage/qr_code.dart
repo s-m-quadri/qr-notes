@@ -1,5 +1,10 @@
+import 'dart:convert';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'qr_note_view.dart';
+import 'package:encrypt/encrypt.dart' as encrypt;
+import 'package:archive/archive.dart';
 
 class QRCode {
   QRCode({
@@ -25,6 +30,29 @@ class QRCode {
       "qr_title": title,
       "qr_content": content,
     };
+  }
+  
+  void compressContent(){
+    // var key = encrypt.Key.fromUtf8("NoTeQRC0De@9021KCK#VL#(Fd;evekc3");
+    // var iv = encrypt.IV.fromUtf8("f#fCEefecw2vecdV");
+    // var encr = encrypt.Encrypter(encrypt.AES(key));
+    // return encr.encrypt(this.content, iv: iv).base64;
+    var stringBytes = utf8.encode(this.content);
+    var gzipBytes = GZipEncoder().encode(stringBytes);
+    this.content = base64.encode(gzipBytes!);
+  }
+
+  String getCompressedContents(){
+    this.compressContent();
+    var result = this.content;
+    this.unCompressContent();
+    return result;
+  }
+
+  void unCompressContent(){
+    var result = base64Decode(this.content);
+    var gzipBytes = GZipDecoder().decodeBytes(result);
+    this.content = utf8.decode(gzipBytes);
   }
 }
 
@@ -114,4 +142,13 @@ List<QRNSection> fromContentToSections(String qr_content) {
     );
   }
   return result;
+}
+
+String getRandomID({chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890', id_length = 16}){
+  Random _rnd = Random();
+
+  String getRandomString(int length) => String.fromCharCodes(Iterable.generate(
+      length, (_) => chars.codeUnitAt(_rnd.nextInt(chars.length))));
+
+  return getRandomString(id_length);
 }
