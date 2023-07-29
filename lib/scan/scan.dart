@@ -53,6 +53,7 @@ class _QRScanState extends State<QRScan> {
           continue;
         }
         qr_code.unCompressContent();
+        qr_code.buidSections();
         db.insertQRCode(
           data: qr_code,
         );

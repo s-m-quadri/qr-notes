@@ -20,6 +20,7 @@ class QRCode {
   int partTotal;
   String title;
   String content;
+  List<QRNSection>? sections;
 
   // For database, column to data unit match
   Map<String, dynamic> mapToDB() {
@@ -81,6 +82,58 @@ ${qr_parts[i]}""");
     var gzipBytes = GZipDecoder().decodeBytes(result);
     this.content = utf8.decode(gzipBytes);
   }
+
+  void buidSections() {
+    List<QRNSection> result = [];
+    RegExp exp = RegExp(r"^(?:\s)*#=>(?:\s)*([^\n]*)");
+    List<String> lines = this.content.split(RegExp(r"\n+"));
+    bool waiting_for_meta = false;
+    String? title;
+    String? type;
+    String? key;
+    List<String> content = [];
+    for (String line in lines) {
+      if (exp.hasMatch(line) && waiting_for_meta == false) {
+        // i.e. First line of Header detected
+        // 1. Add previous stored QR Note (if any)
+        if (title != null && type != null && key != null) {
+          result.add(
+            QRNSection(
+                title: title, type: type, key: key, content: content.join("\n")),
+          );
+        }
+        // 2. Cleanup before processing
+        title = null;
+        type = null;
+        key = null;
+        content = [];
+        // 3. Store title, trigger for next header line
+        title = exp.firstMatch(line)![1].toString();
+        waiting_for_meta = true;
+      } else if (exp.hasMatch(line) && waiting_for_meta == true) {
+        // i.e. Second line of Header detected
+        // Store type and key type
+        String meta = exp.firstMatch(line)![1].toString();
+        List tokens = meta.split(RegExp(r"/"));
+        type = tokens[0];
+        key = tokens[1];
+        waiting_for_meta = false;
+      } else {
+        // i.e. Orinary line detected,
+        // Store to previous QR Note content
+        content.add(line);
+      }
+    }
+
+    // Add last one
+    if (title != null && type != null && key != null) {
+      result.add(
+        QRNSection(
+            title: title, type: type, key: key, content: content.join("\n")),
+      );
+    }
+    this.sections = result;
+  }
 }
 
 class QRNSection {
@@ -95,6 +148,12 @@ class QRNSection {
   String type;
   String key;
   String content;
+
+  String getRaw(){
+    return """#=> ${this.title}
+#=> ${this.type}/${this.key}
+${this.content}""";
+  }
 }
 
 QRCode? fromStringToQRCode(String input) {
@@ -118,58 +177,58 @@ QRCode? fromStringToQRCode(String input) {
         partTotal: qr_part_total);
   }
 }
-
-List<QRNSection> fromContentToSections(String qr_content) {
-  List<QRNSection> result = [];
-  RegExp exp = RegExp(r"^(?:\s)*#=>(?:\s)*([^\n]*)");
-  List<String> lines = qr_content.split(RegExp(r"\n+"));
-  bool waiting_for_meta = false;
-  String? title;
-  String? type;
-  String? key;
-  List<String> content = [];
-  for (String line in lines) {
-    if (exp.hasMatch(line) && waiting_for_meta == false) {
-      // i.e. First line of Header detected
-      // 1. Add previous stored QR Note (if any)
-      if (title != null && type != null && key != null) {
-        result.add(
-          QRNSection(
-              title: title, type: type, key: key, content: content.join("\n")),
-        );
-      }
-      // 2. Cleanup before processing
-      title = null;
-      type = null;
-      key = null;
-      content = [];
-      // 3. Store title, trigger for next header line
-      title = exp.firstMatch(line)![1].toString();
-      waiting_for_meta = true;
-    } else if (exp.hasMatch(line) && waiting_for_meta == true) {
-      // i.e. Second line of Header detected
-      // Store type and key type
-      String meta = exp.firstMatch(line)![1].toString();
-      List tokens = meta.split(RegExp(r"/"));
-      type = tokens[0];
-      key = tokens[1];
-      waiting_for_meta = false;
-    } else {
-      // i.e. Orinary line detected,
-      // Store to previous QR Note content
-      content.add(line);
-    }
-  }
-
-  // Add last one
-  if (title != null && type != null && key != null) {
-    result.add(
-      QRNSection(
-          title: title, type: type, key: key, content: content.join("\n")),
-    );
-  }
-  return result;
-}
+//
+// List<QRNSection> fromContentToSections(String qr_content) {
+//   List<QRNSection> result = [];
+//   RegExp exp = RegExp(r"^(?:\s)*#=>(?:\s)*([^\n]*)");
+//   List<String> lines = qr_content.split(RegExp(r"\n+"));
+//   bool waiting_for_meta = false;
+//   String? title;
+//   String? type;
+//   String? key;
+//   List<String> content = [];
+//   for (String line in lines) {
+//     if (exp.hasMatch(line) && waiting_for_meta == false) {
+//       // i.e. First line of Header detected
+//       // 1. Add previous stored QR Note (if any)
+//       if (title != null && type != null && key != null) {
+//         result.add(
+//           QRNSection(
+//               title: title, type: type, key: key, content: content.join("\n")),
+//         );
+//       }
+//       // 2. Cleanup before processing
+//       title = null;
+//       type = null;
+//       key = null;
+//       content = [];
+//       // 3. Store title, trigger for next header line
+//       title = exp.firstMatch(line)![1].toString();
+//       waiting_for_meta = true;
+//     } else if (exp.hasMatch(line) && waiting_for_meta == true) {
+//       // i.e. Second line of Header detected
+//       // Store type and key type
+//       String meta = exp.firstMatch(line)![1].toString();
+//       List tokens = meta.split(RegExp(r"/"));
+//       type = tokens[0];
+//       key = tokens[1];
+//       waiting_for_meta = false;
+//     } else {
+//       // i.e. Orinary line detected,
+//       // Store to previous QR Note content
+//       content.add(line);
+//     }
+//   }
+//
+//   // Add last one
+//   if (title != null && type != null && key != null) {
+//     result.add(
+//       QRNSection(
+//           title: title, type: type, key: key, content: content.join("\n")),
+//     );
+//   }
+//   return result;
+// }
 
 String getRandomID(
     {chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890',

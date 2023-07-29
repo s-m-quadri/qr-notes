@@ -36,11 +36,12 @@ dependencies:
   shared_preferences: ^2.2.0
   mobile_scanner: ^3.3.0
   flutter_launcher_icons: ^0.13.1
-  flutter_markdown: ^0.6.17
+  flutter_markdown: ^0.6.10+6
   qr_flutter: ^4.1.0
   encrypt: ^5.0.1
   printing: ^5.11.0
   pdf: ^3.10.4
+  markdown_editor_plus: ^0.2.13
 
 dev_dependencies:
   flutter_test:
