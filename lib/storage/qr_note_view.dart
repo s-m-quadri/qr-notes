@@ -3,7 +3,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'qr_code.dart';
 import '../storage/database_manager.dart';
 import '../render/qr_code_raw.dart';
-import '../render/render_pdf.dart';
+import '../render/render_pdf_view.dart';
 
 
 class QRNoteView extends StatefulWidget {
@@ -121,7 +121,7 @@ class _QRNoteViewState extends State<QRNoteView> {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => RenderQRCodeRaw(qr_code: widget.qr_code)));
               },
               icon: Icon(Icons.receipt_outlined),
-              label: Text("Show Raw"),
+              label: Text("Render Raw"),
               style: TextButton.styleFrom(
                 primary: Colors.blue.shade900,
               ),
@@ -141,10 +141,10 @@ class _QRNoteViewState extends State<QRNoteView> {
             ),
             TextButton.icon(
               onPressed: () {
-                generatePDF();
+                Navigator.push(context, MaterialPageRoute(builder: (context) => renderPDFView(qr_code: widget.qr_code,)));
               },
               icon: Icon(Icons.picture_as_pdf_outlined),
-              label: Text("Share PDF"),
+              label: Text("Render PDF"),
               style: TextButton.styleFrom(
                 primary: Colors.blue.shade900,
               ),

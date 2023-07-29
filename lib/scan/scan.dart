@@ -52,6 +52,7 @@ class _QRScanState extends State<QRScan> {
         if (qr_code == null) {
           continue;
         }
+        qr_code.unCompressContent();
         db.insertQRCode(
           data: qr_code,
         );

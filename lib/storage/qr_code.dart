@@ -31,8 +31,8 @@ class QRCode {
       "qr_content": content,
     };
   }
-  
-  void compressContent(){
+
+  void compressContent() {
     // var key = encrypt.Key.fromUtf8("NoTeQRC0De@9021KCK#VL#(Fd;evekc3");
     // var iv = encrypt.IV.fromUtf8("f#fCEefecw2vecdV");
     // var encr = encrypt.Encrypter(encrypt.AES(key));
@@ -42,14 +42,41 @@ class QRCode {
     this.content = base64.encode(gzipBytes!);
   }
 
-  String getCompressedContents(){
+  String getCompressedContents() {
     this.compressContent();
     var result = this.content;
     this.unCompressContent();
     return result;
   }
 
-  void unCompressContent(){
+  List<String> getRawParts({var oneTimeID = null}) {
+    // Divide in equal parts after encoding
+    List<String> qr_parts = [];
+    var buffer_chars = getCompressedContents().split("");
+    int counter = 0;
+    String part_content = "";
+    for (String i in buffer_chars) {
+      part_content += i;
+      counter += 1;
+      if (counter >= 300) {
+        qr_parts.add(part_content);
+        counter = 0;
+        part_content = "";
+      }
+    }
+
+    // Add header to each part
+    List<String> qr_parts_final = [];
+    if (oneTimeID == null) oneTimeID = getRandomID();
+    for (var i = 0; i < qr_parts.length; i++) {
+      qr_parts_final.add("""#=> ${this.title}
+#=> ${oneTimeID}/${i + 1}/${qr_parts.length}
+${qr_parts[i]}""");
+    }
+    return qr_parts_final;
+  }
+
+  void unCompressContent() {
     var result = base64Decode(this.content);
     var gzipBytes = GZipDecoder().decodeBytes(result);
     this.content = utf8.decode(gzipBytes);
@@ -144,7 +171,9 @@ List<QRNSection> fromContentToSections(String qr_content) {
   return result;
 }
 
-String getRandomID({chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890', id_length = 16}){
+String getRandomID(
+    {chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890',
+    id_length = 16}) {
   Random _rnd = Random();
 
   String getRandomString(int length) => String.fromCharCodes(Iterable.generate(
