@@ -1,8 +1,10 @@
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'ds_trace.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
-import 'qr_code.dart';
+import 'ds_qr_code.dart';
 
 abstract class _DatabaseInitializer {
   static Database? _database;
@@ -34,9 +36,26 @@ class DatabaseManager extends _DatabaseInitializer {
     await db.execute("""
           CREATE TABLE qr_codes(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            title TEXT,
-            content TEXT,
-            isEncrypted INTEGER 
+            qr_id TEXT NOT NULL,
+            part_no INTEGER NOT NULL,
+            part_total INTEGER NOT NULL,
+            qr_title TEXT,
+            qr_content TEXT
+          );
+        """);
+    await db.execute("""
+          CREATE TABLE history(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            datetime TEXT NOT NULL,
+            activity TEXT NOT NULL
+          );
+        """);
+    await db.execute("""
+          CREATE TABLE qr_keys(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            key_id TEXT NOT NULL,
+            key_title TEXT,
+            key_content TEXT
           );
         """);
     // ... More tables
@@ -44,11 +63,47 @@ class DatabaseManager extends _DatabaseInitializer {
 
   Future<void> insertQRCode({required QRCode data}) async {
     final db = await _getDB();
+    List<QRCode> allQrCodes = await getAllQRCodes();
+    for( var code in allQrCodes){
+      if (code.qrId == data.qrId){
+        Fluttertoast.showToast(msg: "Failed: Already Exists");
+        return;
+      }
+    }
     await db.insert(
       "qr_codes",
       data.mapToDB(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
+    Trace trace =
+        Trace(activity: "New scan - QR Note #${data.qrId}: ${data.title}");
+    await db.insert(
+      "history",
+      trace.mapToDB(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<void> deleteQRCode({required QRCode data}) async {
+    final db = await _getDB();
+    await db.delete("qr_codes", where: "qr_id = ?", whereArgs: [data.qrId]);
+    Trace trace =
+        Trace(activity: "Deleted - QR Note #${data.qrId}: ${data.title}");
+    await db.insert(
+      "history",
+      trace.mapToDB(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<void> deleteAllTraces() async {
+    final db = await _getDB();
+    await db.rawDelete("DELETE FROM history");
+  }
+
+  Future<void> deleteAllQRCodes() async {
+    final db = await _getDB();
+    await db.rawDelete("DELETE FROM qr_codes");
   }
 
   Future<List<QRCode>> getAllQRCodes() async {
@@ -56,8 +111,27 @@ class DatabaseManager extends _DatabaseInitializer {
     List<Map<String, dynamic>> maps = await db.query("qr_codes");
     List<QRCode> result = [];
     for (Map map in maps) {
-      result.add(QRCode(title: map["title"], content: map["content"]));
+      result.add(QRCode(
+        qrId: map["qr_id"],
+        partNo: map["part_no"],
+        partTotal: map["part_total"],
+        title: map["qr_title"],
+        content: map["qr_content"],
+      ));
     }
-    return result;
+    return result.reversed.toList();
+  }
+
+  Future<List<Trace>> getAllHistory() async {
+    final db = await _getDB();
+    List<Map<String, dynamic>> maps = await db.query("history");
+    List<Trace> result = [];
+    for (Map map in maps) {
+      result.add(Trace(
+        datetime: map["datetime"],
+        activity: map["activity"],
+      ));
+    }
+    return result.reversed.toList();
   }
 }

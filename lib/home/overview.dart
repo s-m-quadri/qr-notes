@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../pagePlaceholder.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class QRNOverview extends StatefulWidget {
   const QRNOverview({Key? key}) : super(key: key);
@@ -11,46 +11,52 @@ class QRNOverview extends StatefulWidget {
 class _QRNOverviewState extends State<QRNOverview> {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Image(
-            image: AssetImage("assets/icon.png"),
-            width: 128,
-          ),
-          SizedBox(height: 10),
-
-          Text("Welcome to",
-              style: TextStyle(
-                fontSize: 24,
-                color: Theme.of(context).primaryColorDark,
-              )),
-
-          Text("QR Notes",
-              style: TextStyle(
-                fontSize: 48,
-                color: Theme.of(context).primaryColorDark,
-              )),
-
-          SizedBox(
-            child: Text(
-              "Scan, Convert, Generate and Share Markdown-Notes via QR Codes",
-              style: TextStyle(
-                fontSize: 14,
-                color: Theme.of(context).primaryColorDark,
-              ),
-              textAlign: TextAlign.center,
+    return ListView(
+      children: [
+        const Image(
+          image: AssetImage("assets/icon.png"),
+          width: 300,
+          height: 300,
+        ),
+        ListTile(
+          title: Text(
+            "Welcome to",
+            style: TextStyle(
+              fontSize: 24,
+              color: Theme.of(context).primaryColorDark,
             ),
-            width: 256,
+            textAlign: TextAlign.center,
           ),
-
-          // Place Holder
-          SizedBox(height: 10),
-          Divider(thickness: 1, color: Theme.of(context).primaryColorDark),
-          RenderPlaceholder(icon: Icons.home_outlined, text: "Home Page")
-        ],
-      ),
+          subtitle: Text(
+            "QR Notes",
+            style: TextStyle(
+              fontSize: 48,
+              color: Theme.of(context).primaryColorDark,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+        ListTile(
+          tileColor: Colors.blue.shade50,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 30),
+          title: Text(
+            "Scan, Convert, Generate and Share Markdown-Notes via QR Codes",
+            style: TextStyle(
+              fontSize: 18,
+              color: Theme.of(context).primaryColorDark,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          subtitle: TextButton(
+            onPressed: () => launchUrl(
+                Uri.parse("https://github.com/s-m-quadri/qr-notes/releases")),
+            style: TextButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: Colors.blue.shade900),
+            child: const Text("What's New!"),
+          ),
+        ),
+      ],
     );
   }
 }

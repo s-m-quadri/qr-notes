@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'database_manager.dart';
-import 'qr_code.dart';
+import 'ds_qr_code.dart';
+import '../qr_note/qr_note_view.dart';
 
 class QRNStorage extends StatefulWidget {
   const QRNStorage({Key? key}) : super(key: key);
@@ -11,28 +12,63 @@ class QRNStorage extends StatefulWidget {
 }
 
 class _QRNStorageState extends State<QRNStorage> {
+  // For Preview in storage page
+  Widget buildShortView(BuildContext context, QRCode qr_note) {
+    return ListTile(
+      horizontalTitleGap: 10,
+      leading: Icon(Icons.qr_code_scanner,
+          size: 50, color: Theme.of(context).primaryColorDark),
+      iconColor: Theme.of(context).primaryColor,
+      title: Text(qr_note.title),
+      subtitle: Text(qr_note.qrId),
+      trailing: const Text("Tap to View"),
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => QRNoteView(qr_code: qr_note)));
+      },
+      splashColor: Theme.of(context).cardColor,
+    );
+  }
+
   // Query all the records from the database,
   // in the qr-code table for all qr-codes
-  // Abstraction, most of the work is done by
-  // 1. Database Management (Dart File)
-  // 2. QR Code (Dart File)
   List<QRCode>? buckets;
+
   Future<Widget> getList() async {
     DatabaseManager db = DatabaseManager();
-    buckets = await db.getAllQRCodes();
-    return ListView.builder(
-      itemCount: buckets!.length,
-      itemBuilder: (context, index) {
-        return buckets![index].buildShortView(context);
-      },
-    );
+    List<QRCode>? buckets_temp = await db.getAllQRCodes();
+
+    setState(() {
+      buckets = buckets_temp;
+    });
+
+    if (buckets!.isEmpty) {
+      return const Text("Scan to get QR Notes!");
+    }
+
+    return RefreshIndicator(
+        child: ListView.builder(
+          itemCount: buckets!.length,
+          itemBuilder: (context, index) {
+            return buildShortView(context, buckets![index]);
+          },
+        ),
+        onRefresh: () async {
+          List<QRCode>? buckets_temp = await db.getAllQRCodes();
+          await Future.delayed(const Duration(milliseconds: 1500));
+          setState(() {
+            buckets = buckets_temp;
+          });
+        });
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Widget>(
-      // Future Builder for Widget returning funtion:
-      // getList is the funtion which requires time to load.
+      // Future Builder for Widget returning function:
+      // getList is the function which requires time to load.
       // Thus, builder function varies based on the status of it.
       future: getList(),
 
@@ -45,9 +81,11 @@ class _QRNStorageState extends State<QRNStorage> {
         if (snapshot.hasData) {
           return snapshot.data!;
         } else if (snapshot.hasError) {
-          return Text("Error Occurred");
+          return const Text("Error Occurred");
         } else {
-          return CircularProgressIndicator();
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
         }
       },
     );

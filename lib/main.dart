@@ -14,13 +14,14 @@ class MyApp extends StatelessWidget {
       title: 'QR Notes',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        primaryColorDark: Color(0xFF1c4587),
-        primaryColor: Color(0xFFA4C2F4),
+        primaryColorDark: const Color(0xFF1c4587),
+        primaryColor: const Color(0xFFA4C2F4),
         primaryColorLight: Colors.white,
-        cardColor: Color(0xFFC9DAF8),
+        cardColor: const Color(0xFFC9DAF8),
         shadowColor: Colors.black,
         brightness: Brightness.light,
         useMaterial3: true,
+        fontFamily: "NovaSquare",
       ),
       home: const HomePage(title: 'QR Notes'),
     );

@@ -1,5 +1,5 @@
 name: qr_notes
-description: A new Flutter project.
+description: Scan, Convert, Generate and Share Markdown-Notes via QR Codes
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -16,10 +16,10 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+1
+version: 1.0.0+2
 
 environment:
-  sdk: '>=2.19.4 <3.0.0'
+  sdk: '>=2.19.4 <5.0.0'
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -30,17 +30,20 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  sqflite:
-  path:
-
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.2
-  shared_preferences: ^2.1.0
-  mobile_scanner: ^3.2.0
+  sqflite: ^2.3.0
+  path: ^1.8.3
+  cupertino_icons: ^1.0.5
+  shared_preferences: ^2.2.0
+  mobile_scanner: ^3.3.0
   flutter_launcher_icons: ^0.13.1
-
+  flutter_markdown: ^0.6.10+6
+  qr_flutter: ^4.1.0
+  encrypt: ^5.0.1
+  printing: ^5.11.0
+  pdf: ^3.10.4
+  markdown_editor_plus: ^0.2.13
+  url_launcher:
+  fluttertoast:
 
 dev_dependencies:
   flutter_test:
@@ -81,10 +84,10 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
+  fonts:
+    - family: NovaSquare
+      fonts:
+        - asset: fonts/NovaSquare-Regular.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro
