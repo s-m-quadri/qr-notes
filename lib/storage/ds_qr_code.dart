@@ -23,7 +23,7 @@ class QRCode {
 
   // Build Sections
   List<QRNSection> sections = [];
-  void buidSections() {
+  void buildSections() {
     List<QRNSection> result = [];
     RegExp exp = RegExp(r"^(?:\s)*#=>(?:\s)*([^\n]*)");
     List<String> lines = this.content.split(RegExp(r"\n+"));
@@ -32,6 +32,7 @@ class QRCode {
     String? type;
     String? key;
     List<String> content = [];
+
     for (String line in lines) {
       if (exp.hasMatch(line) && waiting_for_meta == false) {
         // i.e. First line of Header detected
@@ -73,6 +74,13 @@ class QRCode {
       );
     }
     this.sections = result;
+  }
+  String getContentFromSections(){
+    String raw_content = "";
+    for (var section in this.sections){
+      raw_content = raw_content + "\n${section.getRaw()}";
+    }
+    return raw_content;
   }
 
   // For database, column to data unit match

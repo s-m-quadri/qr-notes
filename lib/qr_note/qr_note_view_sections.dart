@@ -5,6 +5,7 @@ import '../storage/database_manager.dart';
 import 'qr_code_raw.dart';
 import 'render_pdf_view.dart';
 import 'qr_code_edit_section.dart';
+import '../storage/database_manager.dart';
 
 class QRNoteViewSections extends StatefulWidget {
   const QRNoteViewSections({super.key, required this.qr_code});
@@ -15,42 +16,83 @@ class QRNoteViewSections extends StatefulWidget {
 }
 
 class _QRNoteViewSectionsState extends State<QRNoteViewSections> {
+  bool is_modified = false;
   List<QRNSection> sections = [];
   List<QRNSection> mod_sections = [];
+  bool _save_operation = false;
+  String _save_title = "";
 
-  void _updateSections({var index, var new_data = null}) {
+  void _updateSections({var index, var new_data = null, String title = ""}) {
     setState(() {
-      if (widget.qr_code.sections == null) widget.qr_code.buidSections();
-      sections = widget.qr_code.sections!;
+      if (widget.qr_code.sections.isEmpty) widget.qr_code.buildSections();
+      sections = widget.qr_code.sections;
       if (new_data != null) {
+        is_modified = true;
         widget.qr_code.sections![index].content = new_data;
       }
     });
   }
 
-  void _addSection({required var index}) {
+  void _updateTitle(BuildContext context, String title, var index) {
     setState(() {
-      widget.qr_code.sections.insert(
-          index + 1,
-          QRNSection(
-              title: "Untitled", content: "Empty", key: "none", type: "text"));
+      widget.qr_code.sections![index].title = title;
+    });
+    // Navigator.pop(context);
+  }
+
+  AlertDialog _editTitleDialog(BuildContext context, var index) {
+    var _controller1 =
+        TextEditingController(text: "${widget.qr_code.sections[index].title}");
+    return AlertDialog(
+      title: Text("Edit Section - Title"),
+      backgroundColor: Colors.blue.shade50,
+      content: TextField(
+        controller: _controller1,
+        textCapitalization: TextCapitalization.words,
+      ),
+      actions: [
+        TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              "Cancel",
+              style: TextStyle(color: Colors.red.shade700),
+            )),
+        TextButton(
+            style: TextButton.styleFrom(backgroundColor: Colors.blue.shade50),
+            onPressed: () {
+              _updateTitle(context, _controller1.value.text, index);
+              Navigator.pop(context);
+              _editSections(index: index);
+            },
+            child: Text(
+              "Proceed",
+              style: TextStyle(color: Colors.blue.shade700),
+            )),
+      ],
+    );
+  }
+
+  void _duplicateSection({required var index}) {
+    setState(() {
+      is_modified = true;
+      widget.qr_code.sections.insert(index + 1, widget.qr_code.sections[index]);
     });
   }
 
   void _removeSections({required var index}) {
     setState(() {
-      widget.qr_code.sections!.removeAt(index);
+      is_modified = true;
+      widget.qr_code.sections.removeAt(index);
     });
   }
 
   Future<void> _editSections({var index}) async {
-    _updateSections(
-        index: index,
-        new_data: await Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    QRCodeEditSection(text: sections[index].content))));
+    var new_data = await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                QRCodeEditSection(text: sections[index].content)));
+    _updateSections(index: index, new_data: new_data);
   }
 
   Widget buildSection(BuildContext context, int index) {
@@ -70,25 +112,26 @@ class _QRNoteViewSectionsState extends State<QRNoteViewSections> {
           title: MarkdownBody(data: sections[index].content),
           children: [
             ListTile(
-              title: Text("Edit this section"),
+              title: Text("Edit Section"),
               leading: Icon(Icons.mode_edit_outline_outlined),
               iconColor: Colors.blue.shade700,
               textColor: Colors.blue.shade700,
-              onTap: () {
-                _editSections(index: index);
-              },
+              onTap: () => showDialog(
+                context: context,
+                builder: (context) => _editTitleDialog(context, index),
+              ),
             ),
             ListTile(
-              title: Text("Add new section (Before)"),
-              leading: Icon(Icons.add),
+              title: Text("Duplicate Section"),
+              leading: Icon(Icons.add_box_outlined),
               iconColor: Colors.blue.shade700,
               textColor: Colors.blue.shade700,
               onTap: () {
-                _addSection(index: index);
+                _duplicateSection(index: index);
               },
             ),
             ListTile(
-              title: Text("Delete this section"),
+              title: Text("Delete this Section"),
               leading: Icon(Icons.delete_outline),
               iconColor: Colors.red.shade700,
               textColor: Colors.red.shade700,
@@ -110,10 +153,12 @@ class _QRNoteViewSectionsState extends State<QRNoteViewSections> {
       children: [
         ListTile(
           contentPadding: EdgeInsets.all(20),
-          title: Text("ID: ${widget.qr_code.qrId}"),
+          title: Text(
+              "ID: ${widget.qr_code.qrId} | ${is_modified ? 'Not Saved' : 'Saved'}"),
           subtitle:
               Text("${widget.qr_code.title}", style: TextStyle(fontSize: 42)),
-          tileColor: Colors.blue.shade900,
+          tileColor:
+              is_modified ? Colors.yellow.shade900 : Colors.blue.shade900,
           textColor: Colors.white,
         ),
         Expanded(

@@ -14,8 +14,6 @@ class QRNoteViewMeta extends StatefulWidget {
 }
 
 class _QRNoteViewMetaState extends State<QRNoteViewMeta> {
-  bool _delete = false;
-
   AlertDialog _onDeleteQRCode(BuildContext context) {
     return AlertDialog(
           backgroundColor: Colors.red.shade50,
@@ -24,9 +22,7 @@ class _QRNoteViewMetaState extends State<QRNoteViewMeta> {
           actions: [
             TextButton(
                 onPressed: () {
-                  setState(() {
-                    _delete = true;
-                  });
+                  _perform_deletion(context);
                   Navigator.pop(context);
                 },
                 child: Text(
@@ -50,12 +46,10 @@ class _QRNoteViewMetaState extends State<QRNoteViewMeta> {
     DatabaseManager db = DatabaseManager();
     db.deleteQRCode(data: widget.qr_code);
     Navigator.pop(context);
-    dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (this._delete) (_perform_deletion(context));
     return ListView(
       children: [
         Icon(Icons.qr_code_2_sharp, size: 300, color: Colors.blue.shade700),

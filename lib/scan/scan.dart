@@ -52,8 +52,9 @@ class _QRScanState extends State<QRScan> {
         if (qr_code == null) {
           continue;
         }
+        if (qr_code.partTotal != 1) {}
         qr_code.unCompressContent();
-        qr_code.buidSections();
+        qr_code.buildSections();
         db.insertQRCode(
           data: qr_code,
         );
@@ -63,43 +64,71 @@ class _QRScanState extends State<QRScan> {
     }
   }
 
+  Widget _statusWidget() {
+    return _generateStatusWidget(
+        title: "Progress",
+        progress: null,
+        color: Colors.yellow.shade700,
+        icon: Icons.check_circle_outline);
+    return ListTile(
+      title: Text("Progress"),
+      subtitle: LinearProgressIndicator(
+        value: 0.2,
+        backgroundColor: Colors.white,
+        color: Colors.yellow.shade700,
+        minHeight: 10,
+      ),
+      leading: Icon(Icons.check_circle_outline),
+      iconColor: Colors.yellow.shade900,
+      textColor: Colors.yellow.shade900,
+      tileColor: Colors.blue.shade900,
+    );
+  }
+
+  Widget _generateStatusWidget(
+      {String title = "", var progress, var color, var icon}) {
+    return ListTile(
+      title: Text(title),
+      subtitle: LinearProgressIndicator(
+        value: progress,
+        backgroundColor: Colors.white,
+        color: color,
+        minHeight: 10,
+      ),
+      leading: Icon(icon),
+      iconColor: color,
+      textColor: color,
+      tileColor: Colors.blue.shade900,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.blue.shade50,
       appBar: AppBar(
         title: Text("QE Notes - Scanner"),
       ),
       body: Column(children: [
-        Text("Save QR Notes by pointing them!",
-            style: TextStyle(color: Colors.white, fontSize: 20)),
-        SizedBox(height: 10),
-        Center(
-          child: SizedBox(
-            child: MobileScanner(onDetect: _onDetect),
-            width: 400,
-            height: 400,
+        ListTile(
+          contentPadding: EdgeInsets.all(20),
+          subtitle: Text(
+            "Save QR Notes by pointing them!",
+            style: TextStyle(fontSize: 42),
+            textAlign: TextAlign.center,
           ),
+          textColor: Colors.white,
+          tileColor: Colors.blue.shade900,
         ),
-        SizedBox(
-          child: Column(
-            children: [
-              SizedBox(
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  icon: Icon(Icons.close),
-                  label: Text("Cancel"),
-                ),
-                height: 50,
-              ),
-            ],
-            mainAxisAlignment: MainAxisAlignment.center,
-          ),
-          height: 100,
-        )
-      ], mainAxisAlignment: MainAxisAlignment.center),
+        Expanded(
+          child: MobileScanner(onDetect: _onDetect),
+          // title: SizedBox(
+          //   child: MobileScanner(onDetect: _onDetect),
+          //   height: 400,
+          // ),
+        ),
+        _statusWidget(),
+      ]),
     );
   }
 }

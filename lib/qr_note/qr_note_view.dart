@@ -25,6 +25,47 @@ class _QRNoteViewState extends State<QRNoteView> {
     });
   }
 
+  void _saveCopy(BuildContext context, String title) {
+    QRCode new_qr_code = QRCode(
+        qrId: getRandomID(),
+        title: title,
+        content: widget.qr_code.getContentFromSections());
+    DatabaseManager db = DatabaseManager();
+    db.insertQRCode(data: new_qr_code);
+    Navigator.pop(context);
+  }
+
+  AlertDialog _saveDialog(BuildContext context) {
+    var _controller =
+        TextEditingController(text: "Edit - ${widget.qr_code.title}");
+    return AlertDialog(
+      title: Text("Save as new copy!"),
+      backgroundColor: Colors.blue.shade50,
+      content: TextField(
+        controller: _controller,
+        textCapitalization: TextCapitalization.words,
+      ),
+      actions: [
+        TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              "cancel",
+              style: TextStyle(color: Colors.red.shade700),
+            )),
+        TextButton(
+            style: TextButton.styleFrom(backgroundColor: Colors.blue.shade50),
+            onPressed: () {
+              _saveCopy(context, _controller.value.text);
+              Navigator.pop(context);
+            },
+            child: Text(
+              "Save",
+              style: TextStyle(color: Colors.blue.shade700),
+            )),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     List<Widget> _optionWidget = [
@@ -46,6 +87,13 @@ class _QRNoteViewState extends State<QRNoteView> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.qr_code.title),
+      ),
+      floatingActionButton: FloatingActionButton(
+        tooltip: "Save as new copy",
+        backgroundColor: Colors.blue.shade50,
+        foregroundColor: Colors.blue.shade900,
+        child: Icon(Icons.save_as_outlined),
+        onPressed: () => showDialog(context: context, builder: _saveDialog),
       ),
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: Colors.blue.shade700,
