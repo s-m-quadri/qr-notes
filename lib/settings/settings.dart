@@ -29,7 +29,7 @@ class _SettingsState extends State<Settings> {
           ListTile(
             title: const Text("Clear Storage"),
             subtitle: const Text("Delete All the QR Codes"),
-            onTap: () => db.getAllQRCodes(),
+            onTap: () => db.deleteAllQRCodes(),
             splashColor: Colors.blue.shade50,
             leading: const Icon(Icons.cleaning_services_outlined),
             iconColor: Colors.red.shade700,
