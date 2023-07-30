@@ -7,7 +7,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
-import '../storage/qr_code.dart';
+import '../storage/ds_qr_code.dart';
 
 Future<Uint8List> generatePDF(QRCode qr_code) async {
   var doc = pw.Document(

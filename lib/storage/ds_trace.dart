@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class History {
-  History({
+class Trace {
+  Trace({
     this.datetime,
     required this.activity,
   });

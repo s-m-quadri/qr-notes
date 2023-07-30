@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:qr_notes/storage/qr_code.dart';
+import 'package:qr_notes/storage/ds_qr_code.dart';
 
 import '../storage/database_manager.dart';
 

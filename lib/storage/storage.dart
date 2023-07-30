@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'database_manager.dart';
-import 'qr_code.dart';
-import 'qr_note_view.dart';
+import 'ds_qr_code.dart';
+import '../qr_note/qr_note_view.dart';
 
 class QRNStorage extends StatefulWidget {
   const QRNStorage({Key? key}) : super(key: key);

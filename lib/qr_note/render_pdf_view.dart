@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pdf/pdf.dart';
 import 'package:printing/printing.dart';
-import '../render/render_pdf.dart';
-import '../storage/qr_code.dart';
+import '../qr_note/render_pdf.dart';
+import '../storage/ds_qr_code.dart';
 
 class renderPDFView extends StatefulWidget {
   const renderPDFView({super.key, required this.qr_code});

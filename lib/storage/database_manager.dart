@@ -1,9 +1,9 @@
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import 'history.dart';
+import 'ds_trace.dart';
 
-import 'qr_code.dart';
+import 'ds_qr_code.dart';
 
 abstract class _DatabaseInitializer {
   static Database? _database;
@@ -67,8 +67,8 @@ class DatabaseManager extends _DatabaseInitializer {
       data.mapToDB(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
-    History trace =
-        History(activity: "New scan - QR Note #${data.qrId}: ${data.title}");
+    Trace trace =
+        Trace(activity: "New scan - QR Note #${data.qrId}: ${data.title}");
     await db.insert(
       "history",
       trace.mapToDB(),
@@ -79,8 +79,8 @@ class DatabaseManager extends _DatabaseInitializer {
   Future<void> deleteQRCode({required QRCode data}) async {
     final db = await _getDB();
     await db.delete("qr_codes", where: "qr_id = ?", whereArgs: [data.qrId]);
-    History trace =
-        History(activity: "Deleted - QR Note #${data.qrId}: ${data.title}");
+    Trace trace =
+        Trace(activity: "Deleted - QR Note #${data.qrId}: ${data.title}");
     await db.insert(
       "history",
       trace.mapToDB(),
@@ -104,12 +104,12 @@ class DatabaseManager extends _DatabaseInitializer {
     return result.reversed.toList();
   }
 
-  Future<List<History>> getAllHistory() async {
+  Future<List<Trace>> getAllHistory() async {
     final db = await _getDB();
     List<Map<String, dynamic>> maps = await db.query("history");
-    List<History> result = [];
+    List<Trace> result = [];
     for (Map map in maps) {
-      result.add(History(
+      result.add(Trace(
         datetime: map["datetime"],
         activity: map["activity"],
       ));

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:encrypt/encrypt.dart';
-import '../storage/qr_code.dart';
+import '../storage/ds_qr_code.dart';
 
 class RenderQRCodeRaw extends StatefulWidget {
   const RenderQRCodeRaw({super.key, required this.qr_code});

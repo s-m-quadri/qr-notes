@@ -21,6 +21,7 @@ class MyApp extends StatelessWidget {
         shadowColor: Colors.black,
         brightness: Brightness.light,
         useMaterial3: true,
+        fontFamily: "NovaSquare",
       ),
       home: const HomePage(title: 'QR Notes'),
     );

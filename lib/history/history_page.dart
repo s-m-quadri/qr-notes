@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:qr_notes/storage/history.dart';
+import 'package:qr_notes/storage/ds_trace.dart';
 import '../storage/database_manager.dart';
 
 class QRNHistory extends StatefulWidget {
@@ -12,7 +12,7 @@ class QRNHistory extends StatefulWidget {
 
 class _QRNHistoryState extends State<QRNHistory> {
   // For Preview in storage page
-  Widget buildShortView(BuildContext context, History trace) {
+  Widget buildShortView(BuildContext context, Trace trace) {
     return ListTile(
       horizontalTitleGap: 5,
       leading: Icon(Icons.history),
@@ -24,11 +24,11 @@ class _QRNHistoryState extends State<QRNHistory> {
 
   // Query all the records from the database,
   // in the qr-code table for all qr-codes
-  List<History>? buckets;
+  List<Trace>? buckets;
 
   Future<Widget> getList() async {
     DatabaseManager db = DatabaseManager();
-    List<History>? buckets_temp = await db.getAllHistory();
+    List<Trace>? buckets_temp = await db.getAllHistory();
 
     setState(() {
       buckets = buckets_temp;
@@ -46,7 +46,7 @@ class _QRNHistoryState extends State<QRNHistory> {
           },
         ),
         onRefresh: () async {
-          List<History>? buckets_temp = await db.getAllHistory();
+          List<Trace>? buckets_temp = await db.getAllHistory();
           await Future.delayed(Duration(milliseconds: 1500));
           setState(() {
             buckets = buckets_temp;
@@ -56,28 +56,35 @@ class _QRNHistoryState extends State<QRNHistory> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Widget>(
-      // Future Builder for Widget returning function:
-      // getList is the function which requires time to load.
-      // Thus, builder function varies based on the status of it.
-      future: getList(),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("History"),
+      ),
+      body: Center(
+        child: FutureBuilder<Widget>(
+          // Future Builder for Widget returning function:
+          // getList is the function which requires time to load.
+          // Thus, builder function varies based on the status of it.
+          future: getList(),
 
-      // Builder function runs each time the snapshot changes,
-      // snapshot is just the output of getList, at given time.
-      // It runs at:
-      // 1. Initialization,
-      // 2. Success/Failure of snapshot
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return snapshot.data!;
-        } else if (snapshot.hasError) {
-          return Text("Error Occurred");
-        } else {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-      },
+          // Builder function runs each time the snapshot changes,
+          // snapshot is just the output of getList, at given time.
+          // It runs at:
+          // 1. Initialization,
+          // 2. Success/Failure of snapshot
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return snapshot.data!;
+            } else if (snapshot.hasError) {
+              return Text("Error Occurred");
+            } else {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          },
+        ),
+      ),
     );
   }
 }

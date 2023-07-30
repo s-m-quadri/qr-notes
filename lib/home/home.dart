@@ -3,8 +3,6 @@ import '../scan/scan.dart';
 import '../settings/settings.dart';
 import '../about/about.dart';
 import '../storage/storage.dart';
-import '../secretes/secretes.dart';
-import '../workplace/workplace.dart';
 import '../history/history_page.dart';
 import 'overview.dart';
 
@@ -17,7 +15,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 2;
+  int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
     setState(() {
@@ -26,38 +24,21 @@ class _HomePageState extends State<HomePage> {
   }
 
   static const List<Widget> _optionWidget = [
-    QRNSecretes(),
-    QRNWorkplace(),
     QRNOverview(),
     QRNStorage(),
-    QRNHistory(),
   ];
 
   static const List<BottomNavigationBarItem> _optionButtons = [
     BottomNavigationBarItem(
-      icon: Icon(Icons.lock_outline),
-      label: "My Secretes",
-      tooltip: "Secretes Page",
-    ),
-    BottomNavigationBarItem(
-      icon: Icon(Icons.dashboard_customize_outlined),
-      label: "My Workplace",
-      tooltip: "Workplace Page",
-    ),
-    BottomNavigationBarItem(
       icon: Icon(Icons.home_outlined),
       label: "Home",
       tooltip: "Home Page",
+      backgroundColor: Colors.red
     ),
     BottomNavigationBarItem(
       icon: Icon(Icons.dataset_outlined),
       label: "Storage",
       tooltip: "Storage Page",
-    ),
-    BottomNavigationBarItem(
-      icon: Icon(Icons.history),
-      label: "History",
-      tooltip: "History Page",
     ),
   ];
 
@@ -76,9 +57,13 @@ class _HomePageState extends State<HomePage> {
     switch (index) {
       case 1:
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => Settings()));
+            context, MaterialPageRoute(builder: (context) => QRNHistory()));
         break;
       case 2:
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => Settings()));
+        break;
+      case 3:
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => About()));
         break;
@@ -112,8 +97,9 @@ class _HomePageState extends State<HomePage> {
               onSelected: _menuOnSelect,
               itemBuilder: (context) {
                 return const [
-                  PopupMenuItem(value: 1, child: Text("Settings")),
-                  PopupMenuItem(value: 2, child: Text("About")),
+                  PopupMenuItem(value: 1, child: Text("History")),
+                  PopupMenuItem(value: 2, child: Text("Settings")),
+                  PopupMenuItem(value: 3, child: Text("About")),
                 ];
               })
         ],

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../pagePlaceholder.dart';
 
 class QRNOverview extends StatefulWidget {
   const QRNOverview({Key? key}) : super(key: key);
