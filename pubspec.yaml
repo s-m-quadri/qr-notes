@@ -42,6 +42,8 @@ dependencies:
   printing: ^5.11.0
   pdf: ^3.10.4
   markdown_editor_plus: ^0.2.13
+  url_launcher:
+  fluttertoast:
 
 dev_dependencies:
   flutter_test:

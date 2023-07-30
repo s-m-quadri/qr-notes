@@ -21,7 +21,7 @@ class _QRNStorageState extends State<QRNStorage> {
       iconColor: Theme.of(context).primaryColor,
       title: Text(qr_note.title),
       subtitle: Text(qr_note.qrId),
-      trailing: Text("Tap to View"),
+      trailing: const Text("Tap to View"),
       onTap: () {
         Navigator.push(
             context,
@@ -45,7 +45,7 @@ class _QRNStorageState extends State<QRNStorage> {
     });
 
     if (buckets!.isEmpty) {
-      return Text("Scan to get QR Notes!");
+      return const Text("Scan to get QR Notes!");
     }
 
     return RefreshIndicator(
@@ -57,7 +57,7 @@ class _QRNStorageState extends State<QRNStorage> {
         ),
         onRefresh: () async {
           List<QRCode>? buckets_temp = await db.getAllQRCodes();
-          await Future.delayed(Duration(milliseconds: 1500));
+          await Future.delayed(const Duration(milliseconds: 1500));
           setState(() {
             buckets = buckets_temp;
           });
@@ -81,9 +81,9 @@ class _QRNStorageState extends State<QRNStorage> {
         if (snapshot.hasData) {
           return snapshot.data!;
         } else if (snapshot.hasError) {
-          return Text("Error Occurred");
+          return const Text("Error Occurred");
         } else {
-          return Center(
+          return const Center(
             child: CircularProgressIndicator(),
           );
         }

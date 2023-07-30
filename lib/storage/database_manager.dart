@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'ds_trace.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'ds_qr_code.dart';
 
@@ -62,6 +63,13 @@ class DatabaseManager extends _DatabaseInitializer {
 
   Future<void> insertQRCode({required QRCode data}) async {
     final db = await _getDB();
+    List<QRCode> allQrCodes = await getAllQRCodes();
+    for( var code in allQrCodes){
+      if (code.qrId == data.qrId){
+        Fluttertoast.showToast(msg: "Failed: Already Exists");
+        return;
+      }
+    }
     await db.insert(
       "qr_codes",
       data.mapToDB(),
@@ -86,6 +94,16 @@ class DatabaseManager extends _DatabaseInitializer {
       trace.mapToDB(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
+  }
+
+  Future<void> deleteAllTraces() async {
+    final db = await _getDB();
+    await db.rawDelete("DELETE FROM history");
+  }
+
+  Future<void> deleteAllQRCodes() async {
+    final db = await _getDB();
+    await db.rawDelete("DELETE FROM qr_codes");
   }
 
   Future<List<QRCode>> getAllQRCodes() async {

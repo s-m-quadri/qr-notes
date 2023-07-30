@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
 import '../storage/ds_qr_code.dart';
 import '../storage/database_manager.dart';
-import 'qr_code_raw.dart';
-import 'render_pdf_view.dart';
-import 'qr_code_edit_section.dart';
 import 'qr_note_view_sections.dart';
 import 'qr_note_view_meta.dart';
 
@@ -36,13 +32,13 @@ class _QRNoteViewState extends State<QRNoteView> {
   }
 
   AlertDialog _saveDialog(BuildContext context) {
-    var _controller =
+    var controller =
         TextEditingController(text: "Edit - ${widget.qr_code.title}");
     return AlertDialog(
-      title: Text("Save as new copy!"),
+      title: const Text("Save as new copy!"),
       backgroundColor: Colors.blue.shade50,
       content: TextField(
-        controller: _controller,
+        controller: controller,
         textCapitalization: TextCapitalization.words,
       ),
       actions: [
@@ -55,7 +51,7 @@ class _QRNoteViewState extends State<QRNoteView> {
         TextButton(
             style: TextButton.styleFrom(backgroundColor: Colors.blue.shade50),
             onPressed: () {
-              _saveCopy(context, _controller.value.text);
+              _saveCopy(context, controller.value.text);
               Navigator.pop(context);
             },
             child: Text(
@@ -68,17 +64,17 @@ class _QRNoteViewState extends State<QRNoteView> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> _optionWidget = [
+    List<Widget> optionWidget = [
       QRNoteViewMeta(qr_code: widget.qr_code),
       QRNoteViewSections(qr_code: widget.qr_code),
     ];
 
-    List<BottomNavigationBarItem> _optionIcon = [
-      BottomNavigationBarItem(
+    List<BottomNavigationBarItem> optionIcon = [
+      const BottomNavigationBarItem(
         icon: Icon(Icons.qr_code_scanner_outlined),
         label: "Meta",
       ),
-      BottomNavigationBarItem(
+      const BottomNavigationBarItem(
         icon: Icon(Icons.document_scanner_outlined),
         label: "Content",
       ),
@@ -92,17 +88,17 @@ class _QRNoteViewState extends State<QRNoteView> {
         tooltip: "Save as new copy",
         backgroundColor: Colors.blue.shade50,
         foregroundColor: Colors.blue.shade900,
-        child: Icon(Icons.save_as_outlined),
+        child: const Icon(Icons.save_as_outlined),
         onPressed: () => showDialog(context: context, builder: _saveDialog),
       ),
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: Colors.blue.shade700,
         type: BottomNavigationBarType.fixed,
-        items: _optionIcon,
+        items: optionIcon,
         onTap: _bottomNavigationTap,
         currentIndex: _bottom_nav_cur_index,
       ),
-      body: Center(child: _optionWidget.elementAt(_bottom_nav_cur_index)),
+      body: Center(child: optionWidget.elementAt(_bottom_nav_cur_index)),
     );
   }
 }

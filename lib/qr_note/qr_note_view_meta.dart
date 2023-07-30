@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:qr_notes/storage/ds_qr_code.dart';
 import 'qr_code_raw.dart';
 import '../storage/database_manager.dart';
@@ -16,33 +14,32 @@ class QRNoteViewMeta extends StatefulWidget {
 class _QRNoteViewMetaState extends State<QRNoteViewMeta> {
   AlertDialog _onDeleteQRCode(BuildContext context) {
     return AlertDialog(
-          backgroundColor: Colors.red.shade50,
-          title: Text("Do you really want to Delete?"),
-          content: Text("Once deleted, the operation can't be undo."),
-          actions: [
-            TextButton(
-                onPressed: () {
-                  _perform_deletion(context);
-                  Navigator.pop(context);
-                },
-                child: Text(
-                  "Delete Anyway!",
-                  style: TextStyle(color: Colors.red.shade700),
-                )),
-            TextButton(
-                style:
-                    TextButton.styleFrom(backgroundColor: Colors.blue.shade50),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text(
-                  "Keep",
-                  style: TextStyle(color: Colors.blue.shade700),
-                )),
-          ]);
+        backgroundColor: Colors.red.shade50,
+        title: const Text("Do you really want to Delete?"),
+        content: const Text("Once deleted, the operation can't be undo."),
+        actions: [
+          TextButton(
+              onPressed: () {
+                _perform_deletion(context);
+                Navigator.pop(context);
+              },
+              child: Text(
+                "Delete Anyway!",
+                style: TextStyle(color: Colors.red.shade700),
+              )),
+          TextButton(
+              style: TextButton.styleFrom(backgroundColor: Colors.blue.shade50),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text(
+                "Keep",
+                style: TextStyle(color: Colors.blue.shade700),
+              )),
+        ]);
   }
 
-  void _perform_deletion(BuildContext context){
+  void _perform_deletion(BuildContext context) {
     DatabaseManager db = DatabaseManager();
     db.deleteQRCode(data: widget.qr_code);
     Navigator.pop(context);
@@ -52,37 +49,53 @@ class _QRNoteViewMetaState extends State<QRNoteViewMeta> {
   Widget build(BuildContext context) {
     return ListView(
       children: [
-        Icon(Icons.qr_code_2_sharp, size: 300, color: Colors.blue.shade700),
         ListTile(
-          contentPadding: EdgeInsets.all(20),
-          title: Text("Title"),
+          title: Icon(Icons.qr_code_2_rounded,
+              size: 300, color: Colors.blue.shade50),
+          tileColor: Colors.blue.shade900,
+        ),
+        ListTile(
+          contentPadding: const EdgeInsets.all(20),
+          title: const Text("Title"),
           subtitle:
-              Text("${widget.qr_code.title}", style: TextStyle(fontSize: 42)),
+              Text(widget.qr_code.title, style: const TextStyle(fontSize: 42)),
           tileColor: Colors.blue.shade900,
           textColor: Colors.white,
         ),
         ListTile(
-          contentPadding: EdgeInsets.symmetric(horizontal: 20),
-          title: Text("Identifier"),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+          title: const Text("Identifier"),
           subtitle:
-              Text("${widget.qr_code.qrId}", style: TextStyle(fontSize: 36)),
+              Text(widget.qr_code.qrId, style: const TextStyle(fontSize: 22)),
         ),
         ListTile(
-          contentPadding: EdgeInsets.symmetric(horizontal: 20),
-          title: Text("Total Parts"),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+          title: const Text("Total Parts"),
           subtitle: Text("${widget.qr_code.partTotal}",
-              style: TextStyle(fontSize: 36)),
+              style: const TextStyle(fontSize: 22)),
         ),
-        Divider(height: 1, color: Colors.blue.shade900),
+        ExpansionTile(
+          title: const Text("Raw Content"),
+          collapsedBackgroundColor: Colors.grey,
+          collapsedTextColor: Colors.white,
+          backgroundColor: Colors.blue.shade50,
+          trailing: const Text("Show/Hide"),
+          children: [
+            ListTile(
+              subtitle: Text(widget.qr_code.content),
+            )
+          ],
+        ),
+        // Divider(height: 1, color: Colors.blue.shade900),
         ListTile(
-          contentPadding: EdgeInsets.symmetric(horizontal: 20),
-          title: Text("Actions"),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+          title: const Text("Actions"),
           tileColor: Colors.blue.shade700,
           textColor: Colors.white,
         ),
         ListTile(
-          title: Text("Render Raw"),
-          leading: Icon(Icons.receipt_outlined),
+          title: const Text("Screen Render"),
+          leading: const Icon(Icons.splitscreen_outlined),
           iconColor: Colors.blue.shade700,
           textColor: Colors.blue.shade700,
           onTap: () {
@@ -94,8 +107,8 @@ class _QRNoteViewMetaState extends State<QRNoteViewMeta> {
           },
         ),
         ListTile(
-          title: Text("Render PDF"),
-          leading: Icon(Icons.picture_as_pdf_outlined),
+          title: const Text("Render PDF"),
+          leading: const Icon(Icons.picture_as_pdf),
           iconColor: Colors.blue.shade700,
           textColor: Colors.blue.shade700,
           onTap: () {
@@ -108,25 +121,14 @@ class _QRNoteViewMetaState extends State<QRNoteViewMeta> {
           },
         ),
         ListTile(
-          title: Text("Delete QR Code"),
-          leading: Icon(Icons.delete_rounded),
+          title: const Text("Delete QR Code"),
+          leading: const Icon(Icons.delete_outline),
           iconColor: Colors.red.shade700,
           textColor: Colors.red.shade700,
-          onTap: () => showDialog(context: context, builder: _onDeleteQRCode,),
-        ),
-        ExpansionTile(
-          title: Text("Contents"),
-          leading: Icon(Icons.dock),
-          collapsedIconColor: Colors.white,
-          collapsedBackgroundColor: Colors.blue.shade700,
-          collapsedTextColor: Colors.white,
-          backgroundColor: Colors.blue.shade50,
-          trailing: Text("Show/Hide"),
-          children: [
-            ListTile(
-              subtitle: Text(widget.qr_code.content),
-            )
-          ],
+          onTap: () => showDialog(
+            context: context,
+            builder: _onDeleteQRCode,
+          ),
         ),
       ],
     );

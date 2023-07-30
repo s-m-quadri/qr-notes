@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import '../scan/scan.dart';
 import '../settings/settings.dart';
-import '../about/about.dart';
 import '../storage/storage.dart';
 import '../history/history_page.dart';
 import 'overview.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.title});
@@ -30,11 +30,10 @@ class _HomePageState extends State<HomePage> {
 
   static const List<BottomNavigationBarItem> _optionButtons = [
     BottomNavigationBarItem(
-      icon: Icon(Icons.home_outlined),
-      label: "Home",
-      tooltip: "Home Page",
-      backgroundColor: Colors.red
-    ),
+        icon: Icon(Icons.home_outlined),
+        label: "Home",
+        tooltip: "Home Page",
+        backgroundColor: Colors.red),
     BottomNavigationBarItem(
       icon: Icon(Icons.dataset_outlined),
       label: "Storage",
@@ -42,30 +41,23 @@ class _HomePageState extends State<HomePage> {
     ),
   ];
 
-  Future<void> _getScannedNotes(BuildContext context) async {
-    String result = await Navigator.push(
-        context, MaterialPageRoute(builder: (context) => Settings()));
-
-    if (!mounted) return;
-
-    ScaffoldMessenger.of(context)
-      ..removeCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text("Result: $result")));
-  }
 
   void _menuOnSelect(int index) {
     switch (index) {
       case 1:
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => QRNHistory()));
+            context, MaterialPageRoute(builder: (context) => const QRNHistory()));
         break;
       case 2:
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => Settings()));
+            context, MaterialPageRoute(builder: (context) => const Settings()));
         break;
       case 3:
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => About()));
+        launchUrl(Uri.parse(
+            "https://github.com/s-m-quadri/qr-notes/blob/stable/README.md"));
+        break;
+      case 4:
+        launchUrl(Uri.parse("https://github.com/s-m-quadri/qr-notes"));
         break;
     }
   }
@@ -80,15 +72,15 @@ class _HomePageState extends State<HomePage> {
         // onPressed: _getScannedNotes,
         onPressed: () {
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => QRScan()));
+              context, MaterialPageRoute(builder: (context) => const QRScan()));
         },
+        backgroundColor: Colors.blue.shade50,
+        splashColor: Colors.blue.shade900,
+        tooltip: "Capture QR Notes",
         child: Icon(
           Icons.camera_alt,
-          color: Theme.of(context).primaryColorDark,
+          color: Colors.blue.shade900,
         ),
-        backgroundColor: Theme.of(context).cardColor,
-        splashColor: Theme.of(context).primaryColor,
-        tooltip: "Capture QR Notes",
       ),
       appBar: AppBar(
         title: Text(widget.title),
@@ -100,6 +92,7 @@ class _HomePageState extends State<HomePage> {
                   PopupMenuItem(value: 1, child: Text("History")),
                   PopupMenuItem(value: 2, child: Text("Settings")),
                   PopupMenuItem(value: 3, child: Text("About")),
+                  PopupMenuItem(value: 4, child: Text("Repository")),
                 ];
               })
         ],

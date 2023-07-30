@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:encrypt/encrypt.dart';
 import '../storage/ds_qr_code.dart';
 
 class RenderQRCodeRaw extends StatefulWidget {
@@ -20,14 +18,12 @@ class _RenderQRCodeRawState extends State<RenderQRCodeRaw> {
   }
 
   Widget _itemBuilder_qr_code(BuildContext context, int index) {
-    return ListTile(
-      horizontalTitleGap: 7,
-      minVerticalPadding: 7,
-      title: Text(widget.qr_code.title),
-      subtitle: Column(children: [
-        Text(this.qr_parts[index]),
-        QrImageView(data: this.qr_parts[index], gapless: false)
-      ]),
+    return ExpansionTile(
+        title: Text("Id ${widget.qr_code.qrId} | Part ${index + 1}"),
+        trailing: const Text(""),
+        backgroundColor: Colors.blue.shade50,
+        subtitle: QrImageView(data: qr_parts[index], gapless: false),
+        children: [Text(qr_parts[index])],
     );
   }
 
@@ -35,9 +31,9 @@ class _RenderQRCodeRawState extends State<RenderQRCodeRaw> {
   Widget build(BuildContext context) {
     refreshParts();
     return Scaffold(
-      appBar: AppBar(title: Text("Rendered")),
+      appBar: AppBar(title: const Text("Rendered")),
       body: ListView.builder(
-          itemBuilder: _itemBuilder_qr_code, itemCount: this.qr_parts.length),
+          itemBuilder: _itemBuilder_qr_code, itemCount: qr_parts.length),
     );
   }
 }

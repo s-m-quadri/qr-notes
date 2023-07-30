@@ -15,7 +15,7 @@ class _QRNHistoryState extends State<QRNHistory> {
   Widget buildShortView(BuildContext context, Trace trace) {
     return ListTile(
       horizontalTitleGap: 5,
-      leading: Icon(Icons.history),
+      leading: const Icon(Icons.history),
       iconColor: Theme.of(context).primaryColor,
       title: Text(trace.datetime.toString()),
       subtitle: Text(trace.activity),
@@ -28,14 +28,14 @@ class _QRNHistoryState extends State<QRNHistory> {
 
   Future<Widget> getList() async {
     DatabaseManager db = DatabaseManager();
-    List<Trace>? buckets_temp = await db.getAllHistory();
+    List<Trace>? bucketsTemp = await db.getAllHistory();
 
     setState(() {
-      buckets = buckets_temp;
+      buckets = bucketsTemp;
     });
 
     if (buckets!.isEmpty) {
-      return Text("Do some activity to trace history!");
+      return const Text("Do some activity to trace history!");
     }
 
     return RefreshIndicator(
@@ -46,10 +46,10 @@ class _QRNHistoryState extends State<QRNHistory> {
           },
         ),
         onRefresh: () async {
-          List<Trace>? buckets_temp = await db.getAllHistory();
-          await Future.delayed(Duration(milliseconds: 1500));
+          List<Trace>? bucketsTemp = await db.getAllHistory();
+          await Future.delayed(const Duration(milliseconds: 1500));
           setState(() {
-            buckets = buckets_temp;
+            buckets = bucketsTemp;
           });
         });
   }
@@ -58,7 +58,7 @@ class _QRNHistoryState extends State<QRNHistory> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("History"),
+        title: const Text("History"),
       ),
       body: Center(
         child: FutureBuilder<Widget>(
@@ -76,9 +76,9 @@ class _QRNHistoryState extends State<QRNHistory> {
             if (snapshot.hasData) {
               return snapshot.data!;
             } else if (snapshot.hasError) {
-              return Text("Error Occurred");
+              return const Text("Error Occurred");
             } else {
-              return Center(
+              return const Center(
                 child: CircularProgressIndicator(),
               );
             }

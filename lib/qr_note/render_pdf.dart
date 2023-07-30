@@ -1,11 +1,7 @@
-import 'dart:io';
 import 'dart:typed_data';
-
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:printing/printing.dart';
 
 import '../storage/ds_qr_code.dart';
 
@@ -102,6 +98,6 @@ pw.BarcodeWidget getRenderQRCode({required String data}) {
     data: data,
     width: 100,
     height: 100,
-    margin: pw.EdgeInsets.all(9),
+    margin: const pw.EdgeInsets.all(9),
   );
 }
